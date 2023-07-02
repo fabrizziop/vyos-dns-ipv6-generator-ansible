@@ -1,0 +1,17 @@
+---
+- name: Get running configuration from VyOS router
+  connection: ansible.netcommon.network_cli
+  hosts: vyos_routers
+  gather_facts: no
+
+  tasks:
+    - name: Show running configuration
+      vyos_command:
+        commands:
+          - show configuration commands
+      register: vyos_config
+
+    - name: Save running configuration to a file
+      copy:
+        content: "{{ vyos_config.stdout[0] }}"
+        dest: "vyos_configs/{{ inventory_hostname }}.conf"
